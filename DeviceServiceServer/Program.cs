@@ -1,3 +1,10 @@
+using DeviceServiceServer.Data;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+
 namespace DeviceServiceServer
 {
     public class Program
@@ -5,6 +12,33 @@ namespace DeviceServiceServer
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            //var connectionString = builder.Configuration.GetConnectionString("DeviceServiceServerContextConnection") ?? throw new InvalidOperationException("Connection string 'DeviceServiceServerContextConnection' not found.");
+
+            builder.Services.AddDbContext<DeviceServiceServerContext>();
+
+            builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddRoles<IdentityRole>()
+                .AddEntityFrameworkStores<DeviceServiceServerContext>();
+
+            // Config JWT
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+                     .AddJwtBearer(options =>
+                     {
+                         options.TokenValidationParameters = new TokenValidationParameters
+                         {
+                             ValidateIssuer = true,
+                             ValidateAudience = true,
+                             ValidateLifetime = true,
+                             ValidateIssuerSigningKey = true,
+                             ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                             ValidAudience = builder.Configuration["Jwt:Audience"],
+                             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+                         };
+                     });
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
@@ -24,11 +58,14 @@ namespace DeviceServiceServer
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
+
+            app.MapRazorPages();
 
             app.Run();
         }
