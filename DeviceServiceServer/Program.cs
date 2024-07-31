@@ -39,6 +39,9 @@ namespace DeviceServiceServer
                 };
             });
 
+            builder.Services.AddScoped<JwtTokenService>(); // Registra il servizio JWT
+            builder.Services.AddHttpClient<RemoteDeviceServiceClient>(); // Registra il client HTTP
+
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 

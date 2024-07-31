@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace DeviceServiceServer.Controllers
+namespace DeviceServiceServer.Controllers.API
 {
     [Route("api/[controller]")]
     [ApiController]

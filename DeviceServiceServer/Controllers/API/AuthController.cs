@@ -7,7 +7,7 @@ using System.Security.Claims;
 using System.Text;
 using System.ComponentModel.DataAnnotations;
 
-namespace DeviceServiceServer.Controllers
+namespace DeviceServiceServer.Controllers.API
 {
     [Route("api/[controller]")]
     [ApiController]

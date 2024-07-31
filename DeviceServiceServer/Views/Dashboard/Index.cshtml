@@ -1,0 +1,43 @@
+﻿@{
+    ViewData["Title"] = "Gestione Device Service";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div>
+    <button id="startButton" class="btn btn-success">Start</button>
+    <button id="stopButton" class="btn btn-danger">Stop</button>
+    <button id="restartButton" class="btn btn-warning">Restart</button>
+</div>
+
+<div id="result" style="margin-top: 20px;"></div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#startButton').click(function () {
+            manageService('start');
+        });
+
+        $('#stopButton').click(function () {
+            manageService('stop');
+        });
+
+        $('#restartButton').click(function () {
+            manageService('restart');
+        });
+
+        function manageService(command) {
+            $.ajax({
+                url: `/Api/RemoteDeviceService?command=${command}`,
+                method: 'POST',
+                success: function (response) {
+                    $('#result').text(`Comando '${command}' eseguito con successo: ${response}`);
+                },
+                error: function (xhr) {
+                    $('#result').text(`Errore nell'esecuzione del comando '${command}': ${xhr.responseText}`);
+                }
+            });
+        }
+    });
+</script>
