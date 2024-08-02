@@ -24,7 +24,7 @@ namespace DeviceServiceServer.Controllers.API
                 return BadRequest("Comando non valido.");
             }
 
-            // Invia il comando al DeviceService tramite RemoteServiceClient
+            // Invia il comando al DeviceService tramite RemoteDevuceServiceClient
             var result = await _remoteDeviceServiceClient.SendCommand(command);
 
             // Restituisce il risultato alla vista

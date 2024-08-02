@@ -1,4 +1,5 @@
 ﻿using System.Net.Http.Headers;
+using System.Net.Sockets;
 
 namespace DeviceServiceServer.Data
 {
@@ -18,16 +19,31 @@ namespace DeviceServiceServer.Data
             var token = _jwtTokenService.GenerateToken(); // Genera il token JWT
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            // Costruisce l'URL in base al comando specifico
-            var response = await _httpClient.GetAsync($"https://localhost:5000/{command}");
-
-            if (response.IsSuccessStatusCode)
+            try
             {
+                // Costruisce l'URL in base al comando ricevuto
+                var response = await _httpClient.GetAsync($"https://localhost:5000/{command}");
+
+                // Verifica se la risposta è avvenuta con successo
+                response.EnsureSuccessStatusCode();
+
                 return await response.Content.ReadAsStringAsync();
             }
-            else
+            catch (HttpRequestException ex)
             {
-                return $"Errore: {response.StatusCode}";
+                // Controlla se l'errore è dovuto a connessione rifiutata
+                if (ex.InnerException is SocketException socketEx && socketEx.SocketErrorCode == SocketError.ConnectionRefused)
+                {
+                    return "Errore: impossibile connettersi al DeviceService. Verifica che il servizio sia attivo.";
+                }
+
+                // Altri tipi di errori di richiesta HTTP
+                return $"Errore nella comunicazione con il DeviceService: {ex.Message}";
+            }
+            catch (Exception ex)
+            {
+                // Gestisce eventuali altre eccezioni
+                return $"Errore generale: {ex.Message}";
             }
         }
     }
