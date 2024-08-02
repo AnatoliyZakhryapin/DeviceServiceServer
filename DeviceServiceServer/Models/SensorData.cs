@@ -9,6 +9,7 @@ namespace DeviceServiceServer.Models
         public string Date { get; set; }
         public string Time { get; set; }
         public double Value { get; set; }
+        public int SensorId { get; set; }
 
         public SensorData(DateTime timestamp, string date, string time, double value) 
         { 
