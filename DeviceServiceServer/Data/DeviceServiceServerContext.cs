@@ -7,6 +7,7 @@ namespace DeviceServiceServer.Data
 {
     public class DeviceServiceServerContext : IdentityDbContext<IdentityUser>
     {
+        public DbSet<Sensor> Sensors { get; set; }
         public DbSet<SensorData> SensorDatas { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
