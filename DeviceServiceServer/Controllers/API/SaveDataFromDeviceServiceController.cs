@@ -8,11 +8,12 @@ using System.Text.Json;
 
 namespace DeviceServiceServer.Controllers.API
 {
-    [Route("api/[controller]")]
+    [Route("api/[action]")]
     [ApiController]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public class DataController : ControllerBase
+    public class SaveDataFromDeviceServiceController : ControllerBase
     {
+
         [HttpPost]
         public async Task<IActionResult> StoreSensoreData([FromBody] JsonElement request)
         {
