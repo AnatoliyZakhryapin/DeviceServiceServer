@@ -1,4 +1,7 @@
 ﻿using DeviceServiceServer.Migrations;
+using DeviceServiceServer.Models;
+using Microsoft.EntityFrameworkCore;
+using SensorData = DeviceServiceServer.Models.SensorData;
 
 namespace DeviceServiceServer.Data
 {
@@ -33,6 +36,20 @@ namespace DeviceServiceServer.Data
                 Console.WriteLine($"Error adding sensor data list asynchronously: {ex.Message}");
                 return false;
             }
+        }
+
+        public static async Task<SensorData?> GetLastSensorDataAsync(int sensorId)
+        {
+            await using DeviceServiceServerContext context = new DeviceServiceServerContext();
+
+            SensorData lastSensorData = await context.SensorDatas.Where(sd => sd.SensorId == sensorId).OrderByDescending(sd => sd.Timestamp)
+                                                 .FirstOrDefaultAsync();
+            if (lastSensorData == null)
+            {
+                return null;
+            }
+
+            return lastSensorData;
         }
     }
 }
